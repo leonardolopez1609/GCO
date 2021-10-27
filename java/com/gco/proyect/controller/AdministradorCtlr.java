@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gco.proyect.dao.AdministradorDAO;
 import com.gco.proyect.model.Administrador;
+import com.gco.proyect.model.Paciente;
+import com.gco.proyect.model.Sesion;
 
 
 
@@ -29,11 +31,7 @@ public class AdministradorCtlr {
 	
 	
 	
-	@GetMapping("/index")
-	public String index(Model model) {
-		
-		return "index";
-	}
+	
 	
 	@GetMapping("/listar")
 	public String listar(Model model) {
@@ -52,9 +50,49 @@ public class AdministradorCtlr {
 		 @PostMapping("/admin/guardar")
 			public String guardarAdmin(@Validated @ModelAttribute Administrador administrador, BindingResult result,
 					Model model, RedirectAttributes attribute) {
-			  administradorDao.save(administrador);
-				return "index";
+			  if(administradorDao.save(administrador)!=null) {
+					model.addAttribute("usuario", administrador.getNombre());
+					attribute.addFlashAttribute("success", "Registro Exitoso");
+					return "redirect:/loginAdmin";
+			  }
+			  attribute.addFlashAttribute("error", "Por favor verifique los datos");
+				return "redirect:/admin/registro";
 			}
+		 
+		 @PostMapping("/ingresoAdmin")
+			public String ingresoPaciente(@Validated @ModelAttribute Sesion sesion, BindingResult result, Model model,
+					RedirectAttributes attribute) {
+				if (this.login(sesion)!=null) {
+					model.addAttribute("usuario",administradorDao.findById(this.login(sesion)).get().getNombre());
+					return "index";
+				} else
+					attribute.addFlashAttribute("error", "Usuario o contraseña no válidos");
+					return "redirect:/loginAdmin";
+			}
+		 
+		 
+		 public boolean existe(Administrador a) {
+				List<Administrador> lista = administradorDao.findAll();
+
+				for (Administrador pacientes : lista) {
+					if (pacientes.getCorreo().equals(a.getCorreo())) {
+						return true;
+					}
+				}
+				return false;
+			}
+		 
+		 public Long login(Sesion s) {
+				List<Administrador> lista = administradorDao.findAll();
+
+				for (Administrador admins : lista) {
+					if (admins.getCorreo().equals(s.getUser()) && admins.getContrasenia().equals(s.getPass())) {
+						return admins.getIdadministrador();
+					}
+				}
+				return null;
+			}
+		 
 		
 }
 
