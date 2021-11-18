@@ -1,5 +1,10 @@
 package com.gco.proyect.controller;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gco.proyect.dao.AdministradorDAO;
 import com.gco.proyect.dao.PacienteDAO;
+import com.gco.proyect.dao.SolicitudDAO;
+import com.gco.proyect.model.Administrador;
 import com.gco.proyect.model.Paciente;
 import com.gco.proyect.model.Sesion;
+import com.gco.proyect.model.Solicitud;
 
 @Controller
 //@RestController
@@ -24,16 +33,28 @@ public class PacienteCtlr {
 
 	@Autowired
 	private PacienteDAO pacienteDAO;
+	@Autowired
+	private AdministradorDAO adminDao;
+	@Autowired
+	private SolicitudDAO solicitudDao;
 
 	@PostMapping("/ingresoPaciente")
 	public String ingresoPaciente(@Validated @ModelAttribute Sesion sesion, BindingResult result, Model model,
 			RedirectAttributes attribute) {
-		if (this.login(sesion)!=null) {
-			model.addAttribute("usuario", pacienteDAO.findById(this.login(sesion)).get().getNombre());
-			return "index";
+		if (this.login(sesion) != null) {
+			Solicitud soli = new Solicitud();
+			String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+			List<Administrador> admins = (List<Administrador>) adminDao.findAll();
+			Long idpaciente = this.login(sesion);
+
+			model.addAttribute("solicitud", soli);
+			model.addAttribute("admins", admins);
+			model.addAttribute("idpac", idpaciente);
+			model.addAttribute("nombre", pacienteDAO.findById(idpaciente).get().getNombre());
+			return "Vistas/Solicitud";
 		} else
 			attribute.addFlashAttribute("error", "Usuario o contraseña no válidos");
-			return "redirect:/loginPaciente";
+		return "redirect:/loginPaciente";
 	}
 
 	@GetMapping("/paciente/registro")
@@ -78,4 +99,5 @@ public class PacienteCtlr {
 		return null;
 	}
 
+	
 }

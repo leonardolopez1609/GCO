@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gco.proyect.dao.AdministradorDAO;
 import com.gco.proyect.model.Administrador;
-import com.gco.proyect.model.Paciente;
 import com.gco.proyect.model.Sesion;
 
 
