@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -42,19 +44,36 @@ public class PacienteCtlr {
 	public String ingresoPaciente(@Validated @ModelAttribute Sesion sesion, BindingResult result, Model model,
 			RedirectAttributes attribute) {
 		if (this.login(sesion) != null) {
-			Solicitud soli = new Solicitud();
-			String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-			List<Administrador> admins = (List<Administrador>) adminDao.findAll();
+			// Solicitud soli = new Solicitud();
+			// String t = this.minFecha(LocalDateTime.now().plusDays(1));
+
+			// String timeStamp = new
+			// SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+			// List<Administrador> admins = (List<Administrador>) adminDao.findAll();
 			Long idpaciente = this.login(sesion);
 
-			model.addAttribute("solicitud", soli);
-			model.addAttribute("admins", admins);
+			// model.addAttribute("solicitud", soli);
+			// model.addAttribute("min", t);
 			model.addAttribute("idpac", idpaciente);
 			model.addAttribute("nombre", pacienteDAO.findById(idpaciente).get().getNombre());
-			return "Vistas/Solicitud";
+			System.out.println(idpaciente + "---------------------------");
+			return "index";
 		} else
 			attribute.addFlashAttribute("error", "Usuario o contraseña no válidos");
 		return "redirect:/loginPaciente";
+	}
+
+	@GetMapping("/paciente/solicitud/{idpaciente}")
+	public String solicitarCita(Model model, @PathVariable("idpaciente") Long idpaciente) {
+		Solicitud soli = new Solicitud();
+		String t = this.minFecha(LocalDateTime.now().plusDays(1));
+		Paciente paciente = new Paciente();
+
+		model.addAttribute("min", t);
+		model.addAttribute("solicitud", soli);
+		model.addAttribute("idpac", idpaciente);
+		model.addAttribute("nombre", pacienteDAO.findById(idpaciente).get().getNombre());
+		return "Vistas/solicitud";
 	}
 
 	@GetMapping("/paciente/registro")
@@ -99,5 +118,56 @@ public class PacienteCtlr {
 		return null;
 	}
 
-	
+	public String minFecha(LocalDateTime fecha) {
+		List<Solicitud> solis = solicitudDao.findAll();
+		int nCitas = 0;
+		for (Solicitud soli : solis) {
+			if (soli.getFecha().equals(fecha.format(DateTimeFormatter.ISO_DATE))) {
+				nCitas++;
+			}
+		}
+		if (nCitas == 10) {
+			return this.minFecha(fecha.plusDays(1));
+		} else {
+			return fecha.format(DateTimeFormatter.ISO_DATE);
+		}
+	}
+
+	public List<Solicitud> SoliPorPac(Long idpaciente) {
+		List<Solicitud> solis = solicitudDao.findAll();
+		List<Solicitud> solis2 = new ArrayList<Solicitud>();
+		for (Solicitud soli : solis) {
+			if (soli.getIdpaciente().getIdpaciente().equals(idpaciente)) {
+				solis2.add(soli);
+			}
+		}
+		System.out.println(solis2);
+		return solis2;
+
+	}
+
+	@GetMapping("/verCitas/{idpaciente}")
+	public String citasPorPaciente(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
+			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
+
+		List<Solicitud> solis = this.SoliPorPac(idpaciente);
+
+		model.addAttribute("solis", solis);
+		model.addAttribute("nombre", solicitud.getIdpaciente().getNombre());
+		model.addAttribute("idpac", idpaciente);
+		return "Vistas/citasPaciente";
+	}
+
+	@GetMapping("/cancelarCitas/{idsolicitud}")
+	public String cancelarSolicitud(RedirectAttributes attribute, @PathVariable("idsolicitud") Long idsolicitud) {
+		
+		
+		Long id = solicitudDao.findById(idsolicitud).get().getIdpaciente().getIdpaciente();
+		
+		solicitudDao.deleteById(idsolicitud);
+		
+		return "redirect:/verCitas/"+id;
+
+	}
+
 }

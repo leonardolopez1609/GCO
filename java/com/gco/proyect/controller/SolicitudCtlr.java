@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import com.gco.proyect.model.Administrador;
 import com.gco.proyect.model.Estadosolicitud;
 import com.gco.proyect.model.Horario;
 import com.gco.proyect.model.Multa;
+import com.gco.proyect.model.Sesion;
 import com.gco.proyect.model.Solicitud;
 import com.gco.proyect.model.Tiposolicitud;
 
@@ -60,13 +62,13 @@ public class SolicitudCtlr {
 	public String verFechas(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
 			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
 		System.out.println(solicitud);
-		String t = this.minFecha(LocalDateTime.now().plusDays(1), solicitud.getIdadministrador().getIdadministrador());
-		Long idAdmin = solicitud.getIdadministrador().getIdadministrador();
-		String administrador = solicitud.getIdadministrador().getNombre();
+		//String t = this.minFecha(LocalDateTime.now().plusDays(1));
+		//Long idAdmin = solicitud.getIdadministrador().getIdadministrador();
+		//String administrador = solicitud.getIdadministrador().getNombre();
 
-		model.addAttribute("min", t);
-		model.addAttribute("administrador", administrador);
-		model.addAttribute("idAdmin", idAdmin);
+		model.addAttribute("min", solicitud.getFecha());
+		//model.addAttribute("administrador", administrador);
+		//model.addAttribute("idAdmin", idAdmin);
 		model.addAttribute("idpac", idpaciente);
 		model.addAttribute("nombre", pacienteDao.findById(idpaciente).get().getNombre());
 
@@ -79,15 +81,18 @@ public class SolicitudCtlr {
 	public String verHorarios(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
 			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
 		System.out.println(solicitud);
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+		//String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 		List<Horario> horarioDisp = this.horarioDisp(solicitud);
-		List<Administrador> admins = (List<Administrador>) adminDao.findAll();
+		//List<Administrador> admins = (List<Administrador>) adminDao.findAll();
+		//Long idAdmin = solicitud.getIdadministrador().getIdadministrador();
+		//String administrador = solicitud.getIdadministrador().getNombre();
 		List<Tiposolicitud> tipoSol = (List<Tiposolicitud>) tipoSolDao.findAll();
 
 		model.addAttribute("horas", horarioDisp);
-		model.addAttribute("min", timeStamp);
+		//model.addAttribute("min", timeStamp);
 		model.addAttribute("hoy", solicitud.getFecha());
-		model.addAttribute("admins", admins);
+		//model.addAttribute("administrador", administrador);
+		//model.addAttribute("idAdmin", idAdmin);
 		model.addAttribute("tiposol", tipoSol);
 		model.addAttribute("idpac", idpaciente);
 		model.addAttribute("nombre", pacienteDao.findById(idpaciente).get().getNombre());
@@ -106,6 +111,7 @@ public class SolicitudCtlr {
 		System.out.println(solicitud);
 		solicitudDao.save(solicitud);
 		model.addAttribute("usuario", solicitud.getIdpaciente().getNombre());
+		model.addAttribute("idpac", idpaciente);
 		return "index";
 	}
 
@@ -115,34 +121,13 @@ public class SolicitudCtlr {
 		List<Horario> horas1 = horarioDao.findAll();
 		List<Solicitud> solis = solicitudDao.findAll();
 		for (Solicitud soli : solis) {
-			if (soli.getIdadministrador().getIdadministrador()
-					.equals(solicitud.getIdadministrador().getIdadministrador())
-					&& soli.getFecha().equals(solicitud.getFecha())) {
+			if (soli.getFecha().equals(solicitud.getFecha())) {
 				horas1.remove(soli.getIdhorario());
 				System.out.println(soli.getIdhorario());
 			}
 		}
 		return horas1;
 	}
-
-	
-	
-	public String minFecha(LocalDateTime fecha, Long idAdmin) {
-		List<Solicitud> solis = solicitudDao.findAll();
-		int nCitas = 0;
-		for (Solicitud soli : solis) {
-			if (soli.getFecha().equals(fecha.format(DateTimeFormatter.ISO_DATE))
-					&& soli.getIdadministrador().getIdadministrador().equals(idAdmin)) {
-				nCitas++;
-			}
-		}
-		if (nCitas == 10) {
-			return this.minFecha(fecha.plusDays(1), idAdmin);
-		} else {
-			return fecha.format(DateTimeFormatter.ISO_DATE);
-		}
-	}
-
 	
 	
 	@GetMapping("/editarEstado/{idsolicitud}")
@@ -159,25 +144,7 @@ public class SolicitudCtlr {
 
 	
 	
-	@PostMapping("/editarSolicitud")
-	public String solicitar(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
-			RedirectAttributes attribute) {
-		System.out.println(solicitud);
-		solicitudDao.save(solicitud);
-		return "/porHacer";
-	}
-	
-
 	
 	
-	@GetMapping("/editarEstado/{idsolicitud}")
-	public String agregarMulta(@Validated @ModelAttribute Multa multa, Model model,@PathVariable("idsolicitud") Long idsolicitud ) {
-        
-		solicitudDao.getById(idsolicitud).setIdmulta(multa);
-		
-		
-		return "/porHacer";
-	}
 	
-		
 	}
