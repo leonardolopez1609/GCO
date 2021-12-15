@@ -1,11 +1,9 @@
 package com.gco.proyect.controller;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +18,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gco.proyect.dao.AdministradorDAO;
 import com.gco.proyect.dao.PacienteDAO;
 import com.gco.proyect.dao.SolicitudDAO;
-import com.gco.proyect.model.Administrador;
+
 import com.gco.proyect.model.Paciente;
 import com.gco.proyect.model.Sesion;
 import com.gco.proyect.model.Solicitud;
 
 @Controller
-//@RestController
 @RequestMapping()
 public class PacienteCtlr {
 
 	@Autowired
 	private PacienteDAO pacienteDAO;
-	@Autowired
-	private AdministradorDAO adminDao;
+
 	@Autowired
 	private SolicitudDAO solicitudDao;
 
@@ -44,19 +39,12 @@ public class PacienteCtlr {
 	public String ingresoPaciente(@Validated @ModelAttribute Sesion sesion, BindingResult result, Model model,
 			RedirectAttributes attribute) {
 		if (this.login(sesion) != null) {
-			// Solicitud soli = new Solicitud();
-			// String t = this.minFecha(LocalDateTime.now().plusDays(1));
-
-			// String timeStamp = new
-			// SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-			// List<Administrador> admins = (List<Administrador>) adminDao.findAll();
+			
 			Long idpaciente = this.login(sesion);
 
-			// model.addAttribute("solicitud", soli);
-			// model.addAttribute("min", t);
 			model.addAttribute("idpac", idpaciente);
 			model.addAttribute("nombre", pacienteDAO.findById(idpaciente).get().getNombre());
-			System.out.println(idpaciente + "---------------------------");
+			
 			return "index";
 		} else
 			attribute.addFlashAttribute("error", "Usuario o contraseña no válidos");
@@ -67,7 +55,7 @@ public class PacienteCtlr {
 	public String solicitarCita(Model model, @PathVariable("idpaciente") Long idpaciente) {
 		Solicitud soli = new Solicitud();
 		String t = this.minFecha(LocalDateTime.now().plusDays(1));
-		Paciente paciente = new Paciente();
+		
 
 		model.addAttribute("min", t);
 		model.addAttribute("solicitud", soli);
@@ -77,30 +65,59 @@ public class PacienteCtlr {
 	}
 
 	@GetMapping("/paciente/registro")
-	public String registarAdmin(Model model) {
+	public String registarPaciente(Model model) {
 		Paciente paciente = new Paciente();
 		model.addAttribute("paciente", paciente);
 		return "Vistas/registrarPaciente";
+	}
+	
+	@GetMapping("/paciente/editar/{idpaciente}")
+	public String editarPaciente(Model model, @PathVariable("idpaciente") Long idpaciente) {
+		Paciente paciente = pacienteDAO.getById(idpaciente);
+		 model.addAttribute("nombre", pacienteDAO.findById(idpaciente).get().getNombre());
+		model.addAttribute("paciente", paciente);
+		model.addAttribute("idpaciente", idpaciente);
+		
+		return "Vistas/editpaciente";
 	}
 
 	@PostMapping("/paciente/guardar")
 	public String guardarAdmin(@Validated @ModelAttribute Paciente paciente, BindingResult result, Model model,
 			RedirectAttributes attribute) {
-		if (!this.existe(paciente)) {
+		if (this.existe(paciente)) {
+			attribute.addFlashAttribute("error", "Ya existe un usuario con ese número de Docuemnto");
+			return "redirect:/paciente/registro";
+		}else {
 			if (pacienteDAO.save(paciente) != null) {
 				attribute.addFlashAttribute("success", "Registro Exitoso");
 				return "redirect:/loginPaciente";
 			}
 		}
+		
 		attribute.addFlashAttribute("error", "Por favor verifique los datos");
 		return "redirect:/paciente/registro";
+	}
+	
+	@PostMapping("/paciente/editarPaciente/{idpaciente}")
+	public String editarDatosPaciente(@Validated @ModelAttribute Paciente paciente, BindingResult result, Model model,
+			RedirectAttributes attribute,@PathVariable("idpaciente") Long idpaciente) {
+	        paciente.setIdpaciente(idpaciente);
+	        paciente.setContrasenia(pacienteDAO.findById(idpaciente).get().getContrasenia());
+	        model.addAttribute("nombre", pacienteDAO.findById(idpaciente).get().getNombre());
+			if (pacienteDAO.save(paciente) != null) {
+				attribute.addFlashAttribute("success", "Datos editados correctamente");
+				return "redirect:/paciente/editar/"+ paciente.getIdpaciente();
+			}
+		
+		attribute.addFlashAttribute("error", "Por favor verifique los datos");
+		return "redirect:/paciente/editar/"+ paciente.getIdpaciente();
 	}
 
 	public boolean existe(Paciente p) {
 		List<Paciente> lista = pacienteDAO.findAll();
 
 		for (Paciente pacientes : lista) {
-			if (pacientes.getDocumento().equals(p.getDocumento())) {
+			if (pacientes.getDocumento().equals(p.getDocumento())&&pacientes.getTipodocumento().equals(p.getTipodocumento())) {
 				return true;
 			}
 		}
@@ -163,11 +180,85 @@ public class PacienteCtlr {
 		
 		
 		Long id = solicitudDao.findById(idsolicitud).get().getIdpaciente().getIdpaciente();
+		if(solicitudDao.findById(idsolicitud).get().getIdmulta().getMonto()==0) {
+			solicitudDao.deleteById(idsolicitud);
+			return "redirect:/verCitas/"+id;
+		}
 		
-		solicitudDao.deleteById(idsolicitud);
 		
 		return "redirect:/verCitas/"+id;
 
 	}
+	
+	
+	
+	@GetMapping("/verPendientes/{idpaciente}")
+	public String citasPendientes(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
+			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
+        Long i =(long) 1;
+		List<Solicitud> solis = this.SoliPorEst(i, idpaciente);
+        
+		model.addAttribute("solis", solis);
+		model.addAttribute("nombre", solicitud.getIdpaciente().getNombre());
+		model.addAttribute("idpac", idpaciente);
+		return "Vistas/citasPaciente";
+	}
+	@GetMapping("/verAprobadas/{idpaciente}")
+	public String citasAprobadas(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
+			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
+        Long i =(long) 2;
+		List<Solicitud> solis = this.SoliPorEst(i,idpaciente);
+
+		model.addAttribute("solis", solis);
+		model.addAttribute("nombre", solicitud.getIdpaciente().getNombre());
+		model.addAttribute("idpac", idpaciente);
+		return "Vistas/citasPaciente";
+	}
+	
+	@GetMapping("/verRechazadas/{idpaciente}")
+	public String citasRechazadas(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
+			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
+        Long i =(long) 4;
+		List<Solicitud> solis = this.SoliPorEst(i,idpaciente);
+
+		model.addAttribute("solis", solis);
+		model.addAttribute("nombre", solicitud.getIdpaciente().getNombre());
+		model.addAttribute("idpac", idpaciente);
+		return "Vistas/citasPaciente";
+	}
+	
+	@GetMapping("/verRealizadas/{idpaciente}")
+	public String citasRealizadas(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
+			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
+        Long i =(long) 3;
+		List<Solicitud> solis = this.SoliPorEst(i,idpaciente);
+
+		model.addAttribute("solis", solis);
+		model.addAttribute("nombre", solicitud.getIdpaciente().getNombre());
+		model.addAttribute("idpac", idpaciente);
+		return "Vistas/citasPaciente";
+	}
+	
+	@GetMapping("/verMultas/{idpaciente}")
+	public String citasMulta(@Validated @ModelAttribute Solicitud solicitud, BindingResult result, Model model,
+			RedirectAttributes attribute, @PathVariable("idpaciente") Long idpaciente) {
+
+	
+		return "Vistas/citasPaciente";
+	}
+	
+	public List<Solicitud> SoliPorEst(Long idest, Long idpaciente) {
+		List<Solicitud> solis = solicitudDao.findAll();
+		List<Solicitud> solis2 = new ArrayList<Solicitud>();
+		for (Solicitud soli : solis) {
+			if (soli.getIdestado().getIdestadosolicitud().equals(idest)&& soli.getIdpaciente().getIdpaciente().equals(idpaciente)) {
+				solis2.add(soli);
+			}
+		}
+	
+		return solis2;
+
+	}
+	
 
 }
