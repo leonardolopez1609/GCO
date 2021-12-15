@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
 
@@ -82,7 +82,7 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider">
-            <!-- Nav Item - Utilities Collapse Menu -->
+             <!-- Nav Item - Utilities Collapse Menu -->
 			<li class="nav-item">
 				<a class="nav-link collapsed" th:href="@{/loginAdmin}">
 					
@@ -310,16 +310,19 @@
 
 				<!-- Begin Page Content -->
 				<div class="container-fluid">
-				<div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">Citas Pendientes</h1>
+				   <div class="text-center">
+                       <h1 class="h4 text-gray-900 mb-4">Citas Aprobadas</h1>
                    </div>
 					<div class="container col-md-15">
-					<a class="btn btn-success btn-sm" th:href="@{/admin/citasHoy/}+${idadmin}"
+					<a class="btn btn-success btn-sm" th:href="@{/admin/citasHoyA/}+${idadmin}"
 							th:text="'Hoy'"></a>
-						<a class="btn btn-success btn-sm" th:href="@{/admin/citasManana/}+${idadmin}"
+						<a class="btn btn-success btn-sm" th:href="@{/admin/citasMananaA/}+${idadmin}"
 							th:text="'Mañana'"></a>
-							<a class="btn btn-success btn-sm" th:href="@{/admin/citasPendientes/}+${idadmin}"
+							<a class="btn btn-success btn-sm" th:href="@{/admin/citasAprobadas/}+${idadmin}"
 							th:text="'Todas'"></a>
+							<a class="btn btn-warning btn-sm" th:href="@{/admin/multar/}+${idadmin}" th:text="'Multar'"></a>
+							<a class="btn btn-warning btn-sm" th:href="@{/admin/desmultar/}+${idadmin}" th:text="'Eliminar Multas'"></a>
+								
 						<br>
 						<table class="table table-bordered" style="font-family: Arial;">
 							<thead class="thead" style="background-color:#3383FF;color:white;">
@@ -343,8 +346,12 @@
 										<center>CC</center>
 									</th>
 									<th scope="col">
+										<center>Multa $</center>
+									</th>
+									<th scope="col">
 										<center>Acciones</center>
 									</th>
+									
 								</tr>
 							</thead>
 							<tbody style="font-size: 14px;">
@@ -355,14 +362,15 @@
 									<th th:text="${cl.observaciones}">></th>
 									<th th:text="${cl.idpaciente.nombre}">></th>
 									<th th:text="${cl.idpaciente.documento}">></th>
+									<th th:text="${cl.idmulta.monto}">></th>
 
 									<th>
-										<a class="btn btn-success btn-sm"
-											th:href="@{/admin/aceptarCita/} + ${cl.idsolicitud}+${cod}+${idadmin}"
-											th:text="'Aceptar'"></a>&nbsp;<a class="btn btn-danger btn-sm"
-											th:href="@{/admin/rechazarCita/}+${cl.idsolicitud}+${cod}+${idadmin}"
-											th:text="'Rechazar'">
+										<a class="btn btn-warning btn-sm"
+											th:href="@{/admin/desmultar2/}+${idadmin}+${cod}+${cl.idsolicitud}"
+											th:text="' Eliminar  Multa'"></a>
 									</th>
+									
+									
 								</tr>
 
 

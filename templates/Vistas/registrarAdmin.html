@@ -21,7 +21,7 @@
   <link th:href="@{/css/sb-admin-2.css}" rel="stylesheet">
 
 </head>
-
+<header th:replace="Plantillas/plantillaLogin :: header"></header>
 <body class="bg-gradient-primary">
 
     <div class="container">
@@ -58,10 +58,7 @@
                                         <input th:field="*{contrasenia}" type="password" class="form-control form-control-user"
                                             id="exampleInputPassword" placeholder="Contraseña">
                                     </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Confirmar Contraseña">
-                                    </div>
+                                  
                                 </div>
                              
                                 <input class="btn btn-primary btn-user btn-block" type="submit" value="Guardar">

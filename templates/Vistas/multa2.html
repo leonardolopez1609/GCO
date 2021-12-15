@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
 
@@ -39,67 +39,67 @@
 			</a>
 
 			<!-- Divider -->
-			 <hr class="sidebar-divider my-0">
+			<hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
-            
+			<!-- Nav Item - Dashboard -->
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-               Citas
-            </div>
+			<!-- Divider -->
+			<hr class="sidebar-divider">
 
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-            
-            
-                <a class="nav-link collapsed" th:href="@{/admin/citasPendientes/}+${idadmin}">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span> Citas Pendientes</span>
-                </a>
-               
-            </li>
+			<!-- Heading -->
+			<div class="sidebar-heading">
+				Citas
+			</div>
 
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" th:href="@{/admin/citasAprobadas/}+${idadmin}">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Citas Aprobadas</span>
-                </a>
-                
-            </li>
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" th:href="@{/admin/historial/}+${idadmin}">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Historial</span>
-                </a>
-                
-            </li>
+			<!-- Nav Item - Pages Collapse Menu -->
+			<li class="nav-item">
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-            <!-- Nav Item - Utilities Collapse Menu -->
+
+				<a class="nav-link collapsed" th:href="@{/admin/citasPendientes/}+${idadmin}">
+					<i class="fas fa-fw fa-cog"></i>
+					<span> Citas Pendientes</span>
+				</a>
+
+			</li>
+
+			<!-- Nav Item - Utilities Collapse Menu -->
+			<li class="nav-item">
+				<a class="nav-link collapsed" th:href="@{/admin/citasAprobadas/}+${idadmin}">
+					<i class="fas fa-fw fa-wrench"></i>
+					<span>Citas Aprobadas</span>
+				</a>
+
+			</li>
+			<!-- Nav Item - Utilities Collapse Menu -->
+			<li class="nav-item">
+				<a class="nav-link collapsed" th:href="@{/admin/historial/}+${idadmin}">
+					<i class="fas fa-fw fa-wrench"></i>
+					<span>Historial</span>
+				</a>
+
+			</li>
+
+			<!-- Divider -->
+			<hr class="sidebar-divider">
+			<!-- Nav Item - Utilities Collapse Menu -->
 			<li class="nav-item">
 				<a class="nav-link collapsed" th:href="@{/loginAdmin}">
-					
+
 					<span>Cerrar Sesión</span>
 				</a>
 
 			</li>
 
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
+			<!-- Sidebar Toggler (Sidebar) -->
+			<div class="text-center d-none d-md-inline">
+				<button class="rounded-circle border-0" id="sidebarToggle"></button>
+			</div>
 
-            <!-- Sidebar Message -->
-            
+			<!-- Sidebar Message -->
 
-        </ul>
+
+		</ul>
 		<!-- End of Sidebar -->
 
 		<!-- Content Wrapper -->
@@ -309,72 +309,42 @@
 				<!-- End of Topbar -->
 
 				<!-- Begin Page Content -->
-				<div class="container-fluid">
-				<div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">Citas Pendientes</h1>
-                   </div>
-					<div class="container col-md-15">
-					<a class="btn btn-success btn-sm" th:href="@{/admin/citasHoy/}+${idadmin}"
-							th:text="'Hoy'"></a>
-						<a class="btn btn-success btn-sm" th:href="@{/admin/citasManana/}+${idadmin}"
-							th:text="'Mañana'"></a>
-							<a class="btn btn-success btn-sm" th:href="@{/admin/citasPendientes/}+${idadmin}"
-							th:text="'Todas'"></a>
-						<br>
-						<table class="table table-bordered" style="font-family: Arial;">
-							<thead class="thead" style="background-color:#3383FF;color:white;">
-								<tr>
-									<th scope="col">
-										<center>Fecha</center>
-									</th>
-									<th scope="col">
-										<center>Horario</center>
-									</th>
-									<th scope="col">
-										<center>Tipo</center>
-									</th>
-									<th scope="col">
-										<center>Observaciones</center>
-									</th>
-									<th scope="col">
-										<center>Paciente</center>
-									</th>
-									<th scope="col">
-										<center>CC</center>
-									</th>
-									<th scope="col">
-										<center>Acciones</center>
-									</th>
-								</tr>
-							</thead>
-							<tbody style="font-size: 14px;">
-								<tr th:each="cl:${solis}">
-									<th th:text="${cl.fecha}">></th>
-									<th th:text="${cl.idhorario.hora}">></th>
-									<th th:text="${cl.tiposolicitud.nombre}">></th>
-									<th th:text="${cl.observaciones}">></th>
-									<th th:text="${cl.idpaciente.nombre}">></th>
-									<th th:text="${cl.idpaciente.documento}">></th>
-
-									<th>
-										<a class="btn btn-success btn-sm"
-											th:href="@{/admin/aceptarCita/} + ${cl.idsolicitud}+${cod}+${idadmin}"
-											th:text="'Aceptar'"></a>&nbsp;<a class="btn btn-danger btn-sm"
-											th:href="@{/admin/rechazarCita/}+${cl.idsolicitud}+${cod}+${idadmin}"
-											th:text="'Rechazar'">
-									</th>
-								</tr>
+				<!-- Begin Page Content -->
+				<div class="card o-hidden border-0 shadow-lg my-5">
+					<div class="card-body p-0">
+						<!-- Nested Row within Card Body -->
+						<div class="row">
+							<div class="col-lg-5 d-none d-lg-block bg-soli2-image"> </div>
+							<div class="col-lg-7">
+								<div class="p-5">
+									<div class="text-center">
+										<h1 class="h4 text-gray-900 mb-4">Reagendar Cita</h1>
+									</div>
 
 
-								</a>
+									<form class="user" th:object="${solicitud}"
+										th:action="@{/admin/multar3/}+${idsolicitud}+${cod}+${idadmin}" method="post">
 
-								</tr>
-							</tbody>
-						</table>
+										<div class="input-group-prepend">
+											<input th:field="*{fecha}" type="date" id="start" name="trip-start"
+												th:value="${min}" th:min="${min}" max="2099-12-31">
+
+										</div>
+										<hr>
+										<div class="col-sm-6 mb-3 mb-sm-0">
+											<input class=" btn btn-primary btn-user btn-block" type="submit"
+												value="Consultar Horario">
+										</div>
 
 
+									</form>
+									<hr>
+
+
+								</div>
+							</div>
+						</div>
 					</div>
-
 				</div>
 				<!-- End of Main Content -->
 
