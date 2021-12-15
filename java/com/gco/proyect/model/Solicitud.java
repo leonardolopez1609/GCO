@@ -1,6 +1,6 @@
 package com.gco.proyect.model;
 
-import java.sql.Date;
+
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +19,7 @@ public class Solicitud {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idsolicitud;
 
-	private Date fecha;
+	private String fecha;
 	private String observaciones;
 	
 	@ManyToOne
@@ -28,19 +28,20 @@ public class Solicitud {
 	
 	@ManyToOne
 	@JoinColumn(name="id_estadosolicitud")
-	private Tiposolicitud idestado;
+	private Estadosolicitud idestado;
 	
 	@ManyToOne
 	@JoinColumn(name="id_multa")
-	private Tiposolicitud idmulta;
+	private Multa idmulta;
 	
 	@ManyToOne
 	@JoinColumn(name="id_paciente")
-	private Tiposolicitud idpaciente;
+	private Paciente idpaciente;
+	
 	
 	@ManyToOne
-	@JoinColumn(name="id_administrador")
-	private Tiposolicitud idadministrador;
+	@JoinColumn(name="id_horario")
+	private Horario idhorario;
 
 	public Long getIdsolicitud() {
 		return idsolicitud;
@@ -50,11 +51,11 @@ public class Solicitud {
 		this.idsolicitud = idsolicitud;
 	}
 
-	public Date getFecha() {
+	public String getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
 
@@ -74,44 +75,47 @@ public class Solicitud {
 		this.tiposolicitud = tiposolicitud;
 	}
 
-	public Tiposolicitud getIdestado() {
+	public Estadosolicitud getIdestado() {
 		return idestado;
 	}
 
-	public void setIdestado(Tiposolicitud idestado) {
+	public void setIdestado(Estadosolicitud idestado) {
 		this.idestado = idestado;
 	}
 
-	public Tiposolicitud getIdmulta() {
+	public Multa getIdmulta() {
 		return idmulta;
 	}
 
-	public void setIdmulta(Tiposolicitud idmulta) {
+	public void setIdmulta(Multa idmulta) {
 		this.idmulta = idmulta;
 	}
 
-	public Tiposolicitud getIdpaciente() {
+	public Paciente getIdpaciente() {
 		return idpaciente;
 	}
 
-	public void setIdpaciente(Tiposolicitud idpaciente) {
+	public void setIdpaciente(Paciente idpaciente) {
 		this.idpaciente = idpaciente;
 	}
 
-	public Tiposolicitud getIdadministrador() {
-		return idadministrador;
-	}
-
-	public void setIdadministrador(Tiposolicitud idadministrador) {
-		this.idadministrador = idadministrador;
-	}
+	
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
-	public Solicitud(Long idsolicitud, Date fecha, String observaciones, Tiposolicitud tiposolicitud,
-			Tiposolicitud idestado, Tiposolicitud idmulta, Tiposolicitud idpaciente, Tiposolicitud idadministrador) {
+	public Horario getIdhorario() {
+		return idhorario;
+	}
+
+	public void setIdhorario(Horario idhorario) {
+		this.idhorario = idhorario;
+	}
+
+	public Solicitud(Long idsolicitud, String fecha, String observaciones, Tiposolicitud tiposolicitud,
+			Estadosolicitud idestado, Multa idmulta, Paciente idpaciente,
+			Horario idhorario) {
 		super();
 		this.idsolicitud = idsolicitud;
 		this.fecha = fecha;
@@ -120,7 +124,7 @@ public class Solicitud {
 		this.idestado = idestado;
 		this.idmulta = idmulta;
 		this.idpaciente = idpaciente;
-		this.idadministrador = idadministrador;
+		this.idhorario = idhorario;
 	}
 
 	public Solicitud() {
@@ -131,9 +135,16 @@ public class Solicitud {
 	public String toString() {
 		return "Solicitud [idsolicitud=" + idsolicitud + ", fecha=" + fecha + ", observaciones=" + observaciones
 				+ ", tiposolicitud=" + tiposolicitud + ", idestado=" + idestado + ", idmulta=" + idmulta
-				+ ", idpaciente=" + idpaciente + ", idadministrador=" + idadministrador + "]";
+				+ ", idpaciente=" + idpaciente + ", idhorario=" + idhorario
+				+ "]";
 	}
 	
+	
+
+	
+	
+
+
 	
 	
 }

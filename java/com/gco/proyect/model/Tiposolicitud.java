@@ -17,7 +17,7 @@ public class Tiposolicitud {
 	private Long idtiposolicitud;
 
 	private String nombre;
-	private String descripción;
+	private String descripcion;
 	public Long getIdtiposolicitud() {
 		return idtiposolicitud;
 	}
@@ -31,10 +31,10 @@ public class Tiposolicitud {
 		this.nombre = nombre;
 	}
 	public String getDescripción() {
-		return descripción;
+		return descripcion;
 	}
 	public void setDescripción(String descripción) {
-		this.descripción = descripción;
+		this.descripcion = descripción;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -43,7 +43,7 @@ public class Tiposolicitud {
 		super();
 		this.idtiposolicitud = idtiposolicitud;
 		this.nombre = nombre;
-		this.descripción = descripción;
+		this.descripcion = descripción;
 	}
 	public Tiposolicitud() {
 		super();
@@ -51,7 +51,7 @@ public class Tiposolicitud {
 	@Override
 	public String toString() {
 		return "Tiposolicitud [idtiposolicitud=" + idtiposolicitud + ", nombre=" + nombre + ", descripción="
-				+ descripción + "]";
+				+ descripcion + "]";
 	}
 	
 	

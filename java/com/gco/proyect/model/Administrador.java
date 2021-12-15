@@ -18,6 +18,7 @@ public class Administrador {
 	private String nombre;
 	private String correo;
 	private String contrasenia;
+	
 	public Long getIdadministrador() {
 		return idadministrador;
 	}
